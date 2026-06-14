@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>"FocusFlow"</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f4f7fc;
+transition:.3s;
+background-size:cover;
+background-position:center;
+font-size: 18px;
+}
+
+header{
+background:linear-gradient(135deg,#165DFF,#722ED1);
+color:white;
+text-align:center;
+padding:20px 15px;
+}
+
+h1 {
+    font-size: 32px;
+    margin: 5px 0;
+}
+
+#assistant {
+    font-size: 22px;
+    font-weight: bold;
+    transition: 0.3s;
+    margin-bottom: 8px;
+}
+#assistant.hablando {
+    color: #facc15;
+    transform: scale(1.05);
+}
+
+#fraseDia {
+    font-size: 19px;
+    font-style: italic;
+    color: #fef08a;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.15);
+    border-radius: 20px;
+    display: inline-block;
+    animation: brillo 3s infinite;
+}
+@keyframes brillo {
+    0% { box-shadow: 0 0 5px rgba(254, 240, 138, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(254, 240, 138, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(254, 240, 138, 0.3); }
+}
+
+.container{padding:15px;max-width:1000px;margin:auto}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:12px;
+}
+
+.card{
+background:white;
+padding:15px 10px;
+border-radius:12px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+}
+
+.pet-container {
+    text-align: center;
+    background: white;
+    padding: 15px;
+    border-radius:12px;
+    margin:12px 0;
+    border: 3px solid transparent;
+    transition: 0.5s;
+    position: relative;
+    overflow: hidden;
+}
+.pet-final {
+    border-color: #fbbf24 !important;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
+    animation: latido 2s infinite;
+}
+@keyframes latido {
+    0% { box-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b inset; }
+    50% { box-shadow: 0 0 35px #f59e0b, 0 0 40px #fbbf24 inset; }
+    100% { box-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b inset; }
+}
+.pet-legend {
+    border-color: #a855f7 !important;
+    background: linear-gradient(135deg, #faf5ff, #f3e8ff) !important;
+    animation: energia 3s infinite linear;
+}
+@keyframes energia {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+#pet {
+    font-size: 90px;
+    transition: 0.5s;
+}
+#petText {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.section{
+background:white;
+padding:15px;
+margin-top:12px;
+border-radius:12px;
+}
+
+h3 {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+input,select,button,textarea{
+width:100%;
+padding:14px;
+margin-top:8px;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:18px;
+box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: Arial;
+    background: #f8fafc;
+}
+
+button{
+background:#165DFF;
+color:white;
+border:none;
+font-weight:bold;
+transition:0.2s;
+}
+button:active { transform: scale(0.98); }
+button:hover{background:#0044CC}
+
+ul{padding:0;list-style:none}
+
+li{
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+padding:12px;
+margin-top:8px;
+border-radius:10px;
+color:white;
+font-size:18px;
+}
+.task-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    margin-bottom:8px;
+}
+.task-buttons {
+    display:flex;
+    gap:4px;
+}
+
+.alta{background:#F53F3F}
+.media{background:#FF7D00}
+.baja{background:#00B42A}
+
+.calendar-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    font-size:20px;
+    font-weight:bold;
+}
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+margin-top:10px;
+}
+
+.day{
+padding:12px 8px;
+text-align:center;
+background:#f5f7fa;
+border-radius:8px;
+font-size:18px;
+cursor:pointer;
+transition:0.2s;
+position: relative;
+}
+.day:hover { transform: scale(1.05); }
+
+.today{
+background:#165DFF !important;
+color:white !important;
+font-weight:bold;
+border: 3px solid #0044CC !important;
+box-shadow: 0 0 8px #165DFF;
+}
+
+.has-task { border: 3px solid #722ED1; font-weight:bold; }
+.choque { border: 3px solid #F53F3F; animation: shake 0.5s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+#timer {
+    font-size: 60px;
+    text-align: center;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.streak-box {
+    background: linear-gradient(135deg, #F7BA1E, #F53F3F);
+    color: white;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.ia-panel {
+    background: linear-gradient(135deg, #3491FA, #722ED1);
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 12px 0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 85%;
+    max-height: 70%;
+    overflow-y: auto;
+    color: black;
+}
+.modal-content h4 {
+    color:#165DFF;
+    font-size:22px;
+    margin-top:0;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.dark{
+background:#171A1F;
+color:white;
+}
+.dark .card,.dark .section,.dark li,.dark .pet-container,.dark .ia-panel{background:#272E3B;color:white}
+.dark .day { background: #343b48; color: white; }
+.dark input,.dark select,.dark textarea{background:#343b48;color:white}
+.dark #fraseDia { background: rgba(255,255,255,0.1); color: #F7BA1E; }
+.dark .modal-content { background-color: #272E3B; color: white; }
+.dark .pet-final { background: linear-gradient(135deg, #78350f, #92400e) !important; }
+.dark .pet-legend { background: linear-gradient(135deg, #4c1d95, #581c87) !important; }
+
+#confeti {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+    background: radial-gradient(circle, transparent 20%, #000 100%);
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div id="confeti"></div>
+
+<div id="notaModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h4 id="modalTitulo">📝 Detalles de la Tarea</h4>
+    <p id="modalTexto">Aquí irá la nota completa...</p>
+  </div>
+</div>
+
+<header>
+<h1>🚀 FocusFlow 2.0</h1>
+<p id="assistant">Sistema de Organización Inteligente 🧠</p>
+<p id="fraseDia"></p>
+</header>
+
+<div class="container">
+
+<div class="streak-box">
+🔥 Racha: <span id="streakCount">0</span> días
+</div>
+
+<div class="ia-panel">
+<h3>🤖 ASISTENTE PERSONAL</h3>
+<p id="iaStatus">Analizando tu agenda... ✅ Sin conflictos</p>
+<button onclick="reorganizarAgenda()" style="background:white; color:#3491FA; font-weight:bold;">🔄 REORGANIZAR SEMANA AUTOMÁTICAMENTE</button>
+</div>
+
+<div class="grid">
+<div class="card">Tareas <div id="total">0</div></div>
+<div class="card">Hechas <div id="done">0</div></div>
+<div class="card">XP <div id="xp">0</div></div>
+<div class="card">Nivel <div id="level">1</div> / 100 👑</div>
+</div>
+
+<div class="pet-container" id="petContainer">
+<div id="pet">🐣</div>
+<div id="petText">¡Tu compañero de productividad te saluda!</div>
+</div>
+<div class="section">
+<h3>📅 Calendario Inteligente</h3>
+<div class="calendar-header">
+<button onclick="prevMonth()" style="width:auto; padding:8px 15px;">◀</button>
+<span id="monthYear"></span>
+<button onclick="nextMonth()" style="width:auto; padding:8px 15px;">▶</button>
+</div>
+<div id="calendar" class="calendar"></div>
+</div>
+
+<div class="section">
+<h3>📝 Nueva Tarea</h3>
+
+<input id="text" placeholder="📝 Título corto de la tarea...">
+
+<h4 style="margin:12px 0 4px;">📄 Notas / Detalles (Espacio ilimitado):</h4>
+<textarea id="nota" placeholder="Escribe aquí toda la información necesaria, pasos, direcciones, recordatorios... ✍️"></textarea>
+
+<input type="date" id="date">
+<input type="time" id="time">
+
+<select id="priority">
+<option value="alta">🔴 Prioridad ALTA</option>
+<option value="media">🟡 Prioridad MEDIA</option>
+<option value="baja">🟢 Prioridad BAJA</option>
+</select>
+
+<button onclick="addTask()">✅ AGREGAR TAREA</button>
+
+<h3 style="margin-top:20px;">📋 Lista de Tareas</h3>
+<ul id="list"></ul>
+</div>
+
+<div class="section">
+<h3>⏱️ Cronómetro de Enfoque</h3>
+<h2 id="timer">25:00</h2>
+<button onclick="startTimer()">▶ INICIAR</button>
+<button onclick="pauseTimer()">⏸ PAUSAR</button>
+<button onclick="resetTimer()">🔄 REINICIAR</button>
+<p style="text-align:center; margin-top:8px; font-size:16px; color:#666;">⏱️ Tiempo promedio: <span id="tiempoPromedio">0</span> min</p>
+</div>
+
+<div class="section">
+<h3>🔊 Sonido de Alarma</h3>
+<input type="file" accept="audio/*" onchange="setSound(event)">
+<button onclick="stopSound()">🔇 DETENER SONIDO</button>
+<p style="font-size:14px; color:#666; margin-top:8px;">⚠️ Si no eliges sonido, sonará un pitido fuerte por defecto.</p>
+</div>
+
+<div class="section">
+<h3>🖼️ Fondo de Pantalla</h3>
+<input type="file" accept="image/*" onchange="setBg(event)">
+<button onclick="resetBg()">🔳 Poner Fondo Predeterminado</button>
+</div>
+
+<button onclick="toggleDark()" style="font-size:24px; padding:10px; margin:15px 0;">🌙 / ☀️</button>
+
+</div>
+<script>
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let done = +localStorage.getItem("done") || 0;
+let xp = +localStorage.getItem("xp") || 0;
+let level = +localStorage.getItem("level") || 1;
+let streak = +localStorage.getItem("streak") || 0;
+let lastActiveDate = localStorage.getItem("lastActiveDate") || "";
+
+let historicoTiempos = JSON.parse(localStorage.getItem("historicoTiempos")) || {};
+let horariosProductivos = JSON.parse(localStorage.getItem("horariosProductivos")) || {mañana:0, tarde:0, noche:0};
+
+let timer;
+let time = 1500;
+let timerRunning = false;
+let tareaEnProgreso = "";
+
+let sound = localStorage.getItem("sound");
+let audio = null;
+
+let currentDate = new Date();
+const today = new Date();
+
+const frasesMotivadoras = [
+    "🚀 LUNES: El comienzo está en tus manos. Hoy construyes el éxito de la semana.",
+    "💪 LUNES: No esperes a tener oportunidad, créala. ¡Hoy es el día!",
+    "🔥 LUNES: La disciplina vence al talento cuando el talento no se disciplina. ¡A trabajar!",
+    "⚡ MARTES: Ya pasó el primer obstáculo. Mantén el ritmo, vas mejor que ayer.",
+    "🧠 MARTES: El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
+    "🏃 MARTES: No te detengas, lo mejor de tu semana está por llegar.",
+    "🐪 MIÉRCOLES: Estás en la mitad de la semana. ¡Esfuerzo extra, recompensa doble!",
+    "🎯 MIÉRCOLES: Concéntrate en el objetivo. El ruido del exterior no importa.",
+    "⚔️ MIÉRCOLES: La mitad de la semana ya es historia. ¡La otra mitad será gloriosa!",
+    "🌟 JUEVES: Ya casi lo logras. Tu constancia es tu superpoder.",
+    "🛡️ JUEVES: Los retos son lo que hacen la vida interesante. Superarlos es lo que hace la vida significativa.",
+    "🏗️ JUEVES: Sigues construyendo tu futuro, bloque a bloque. ¡Vas increíble!",
+    "👑 VIERNES: El rey de la semana. Termina fuerte, no aflojes ahora.",
+    "🎓 VIERNES: El éxito sabe mejor cuando el camino ha sido difícil. ¡Cierra con broche de oro!",
+    "💎 VIERNES: Tu esfuerzo de toda la semana hoy se transforma en resultados. ¡Brilla!",
+    "🏆 SÁBADO: El éxito no se regala, se gana. Incluso hoy, tu ventaja crece.",
+    "🌱 SÁBADO: Planta hoy lo que quieres cosechar mañana. El descanso inteligente también es estrategia.",
+    "⚡ SÁBADO: Mientras el mundo descansa, tú te preparas para dominar la próxima semana.",
+    "🧘 DOMINGO: Planifica tu victoria antes de salir al campo de batalla. La preparación es la clave.",
+    "📜 DOMINGO: El descanso recarga tu mente, la organización asegura tu éxito. ¡Prepara tu semana!",
+    "🔥 DOMINGO: Soñar es el principio, planificar es el medio, actuar es el fin. ¡Tú puedes con todo!",
+    "🧠 Tu mente es tu mayor arma. Úsala bien y nada podrá detenerte.",
+    "⏳ El tiempo no vuelve. Úsalo hoy para crear el mañana que deseas.",
+    "🦅 Vuela alto. Tus metas no tienen techo, solo límites que tú mismo pones.",
+    "🛤️ El camino al éxito es una recta con muchas curvas. No te salgas de la vía.",
+    "👁️ Mantén tus ojos en las estrellas y tus pies en la tierra.",
+    "🔨 Conviértete en dueño de tu destino, no pasajero de tu vida.",
+    "⚓ Cuando sientas que vas a rendirte, recuerda por qué empezaste.",
+    "🧱 Roma no se construyó en un día, pero se construyó día a día. Así es tu éxito.",
+    "🔋 La motivación es lo que te pone en marcha, el hábito es lo que te mantiene.",
+    "📈 Cada día que pasas, eres mejor versión de ti mismo que ayer.",
+    "🎩 La excelencia no es un acto, sino un hábito. ¡Hazlo tuyo!",
+    "⛰️ Las grandes cosas no vienen de zonas de confort. ¡Sal y conquista!",
+    "👤 No te compares con otros, supérate a ti mismo cada día.",
+    "🚪 El fracaso es solo una oportunidad para empezar de nuevo con más inteligencia.",
+    "🧗 Escala montañas no para que el mundo te vea, sino para que tú veas el mundo."
+];
+
+function mostrarFraseDelDia(){
+    let diaSemana = today.getDay();
+    let indiceFrase;
+
+    switch(diaSemana){
+        case 1: indiceFrase = Math.floor(Math.random() * 3); break;
+        case 2: indiceFrase = 3 + Math.floor(Math.random() * 3); break;
+        case 3: indiceFrase = 6 + Math.floor(Math.random() * 3); break;
+        case 4: indiceFrase = 9 + Math.floor(Math.random() * 3); break;
+        case 5: indiceFrase = 12 + Math.floor(Math.random() * 3); break;
+        case 6: indiceFrase = 15 + Math.floor(Math.random() * 3); break;
+        case 0: indiceFrase = 18 + Math.floor(Math.random() * 3); break;
+    }
+    if(Math.random() > 0.7){
+        let inicioGenerales = 21;
+        indiceFrase = inicioGenerales + Math.floor(Math.random() * (frasesMotivadoras.length - inicioGenerales));
+    }
+    document.getElementById('fraseDia').innerText = frasesMotivadoras[indiceFrase];
+}
+
+function renderCalendar(){
+let c=document.getElementById("calendar");
+let my=document.getElementById("monthYear");
+c.innerHTML="";
+
+let monthNames = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+my.innerText = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+let firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+let daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+let adjustDay = (firstDay === 0) ? 6 : firstDay - 1;
+
+for(let i=0; i<adjustDay; i++){ let empty = document.createElement("div"); c.appendChild(empty); }
+for(let i=1;i<=daysInMonth;i++){
+let div=document.createElement("div");
+div.className="day";
+div.innerText=i;
+
+if(i === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear()){ div.classList.add("today"); }
+
+let checkDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
+let tareasDelDia = tasks.filter(t => t.date === checkDate);
+let tieneChoque = false;
+for(let x=0; x<tareasDelDia.length; x++){ for(let y=x+1; y<tareasDelDia.length; y++){ if(verificarChoque(tareasDelDia[x], tareasDelDia[y])){ tieneChoque = true; break; }}}
+if(tieneChoque) div.classList.add("choque");
+else if(tareasDelDia.length > 0) div.classList.add("has-task");
+
+div.onclick = () => { document.getElementById("date").value = checkDate; };
+c.appendChild(div);
+}}
+function prevMonth(){ currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); }
+function nextMonth(){ currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); }
+
+function updatePet(){
+let petEl = document.getElementById("pet");
+let textEl = document.getElementById("petText");
+let container = document.getElementById("petContainer");
+
+container.classList.remove("pet-final");
+container.classList.remove("pet-legend");
+
+if(level >= 1 && level <= 10) {
+    petEl.innerText = "🐣";
+    if(level < 3) textEl.innerText = "¡Hola! Empecemos este camino juntos hacia el éxito. 🤝";
+    else if(level < 5) textEl.innerText = "¡Vamos muy bien! Aprendes rápido y tu disciplina crece. ⏳";
+    else if(level < 7) textEl.innerText = "¡Ya dominas lo básico! Eres muy organizado, gran maestro. 📚";
+    else if(level < 9) textEl.innerText = "¡Estás rompiendo récords! Tu constancia es increíble. 🥇";
+    else textEl.innerText = "¡Nivel 10! Primera etapa superada. ¡Estás listo para CRECER! 🪴";
+}
+
+else if(level >= 11 && level <= 25) {
+    petEl.innerText = "🐥✨";
+    if(level < 15) textEl.innerText = "¡Mírame! Ya soy más grande. Y tú controlas tu tiempo a la perfección 🕐";
+    else if(level < 20) textEl.innerText = "¡Eres increíble! La organización ya es parte de tu naturaleza 🧠";
+    else if(level < 23) textEl.innerText = "Tus hábitos son de ORO. Estás construyendo un futuro brillante ✨";
+    else textEl.innerText = "¡Nivel 25! Ya no eres aprendiz, ahora eres un GUERRERO del orden ⚔️🛡️";
+}
+
+else if(level >= 26 && level <= 45) {
+    petEl.innerText = "🦅📋";
+    container.style.borderColor = '#3491FA';
+    if(level < 32) textEl.innerText = "¡Tienes el control ABSOLUTO! Tu agenda es una obra de arte 🎨";
+    else if(level < 38) textEl.innerText = "¡Vuela alto! Tus alas son la disciplina, y no hay cielo para ti 🦅";
+    else if(level < 42) textEl.innerText = "¡Eres un estratega maestro! Planificas tu vida con inteligencia militar 🎖️";
+    else textEl.innerText = "¡Nivel 45! Tu mente es sólida como un edificio de acero. ¡Imparable! 🏢🧱";
+}
+
+else if(level >= 46 && level <= 65) {
+    petEl.innerText = "🦁🔥";
+    container.style.borderColor = '#FF7D00';
+    if(level < 52) textEl.innerText = "¡ROARRR! 🦁 Eres un líder nato. Todos se preguntan cómo lo logras.";
+    else if(level < 58) textEl.innerText = "¡Eres un MAESTRO! Predices tu éxito y moldeas tu propio destino 🔮";
+    else if(level < 62) textEl.innerText = "La organización ya no es esfuerzo, ES TU INSTINTO NATURAL 🌪️";
+    else textEl.innerText = "¡Nivel 65! Has superado a miles. Eres ÉLITE pura 🏅🥇";
+}
+
+else if(level >= 66 && level <= 80) {
+    petEl.innerText = "👹⚡";
+    container.classList.add("pet-legend");
+    if(level < 72) textEl.innerText = "¡Mírate! Te has convertido en una LEYENDA viviente 🏆";
+    else if(level < 78) textEl.innerText = "Tienes el poder de doblar el tiempo a tu voluntad ⏳✨";
+    else textEl.innerText = "¡Nivel 80! Eres la definición exacta de la palabra ÉXITO 📖✅";
+}
+
+else if(level >= 81 && level <= 99) {
+    petEl.innerText = "🐲🌌";
+    container.classList.add("pet-legend");
+    if(level < 88) textEl.innerText = "¡DRAGÓN ANCESTRAL! 🐲🔥 Nivel de sabiduría y control total.";
+    else if(level < 95) textEl.innerText = "Vives en equilibrio perfecto. Tu mente es un universo ordenado 🌌🧠";
+    else textEl.innerText = "¡CASI PERFECTO! Nivel " + level + ". Ya no cometes errores, TÚ CREAS TU DESTINO ⚖️";
+}
+
+else if(level === 100) {
+    petEl.innerText = "👑🐉✨";
+    container.classList.add("pet-final");
+    
+    textEl.innerHTML = `<strong style="font-size:22px; color:#b45309;">🔥 ¡¡NIVEL 100 ALCANZADO!! 🔥<br><br>
+    ✨ <u>MISIÓN CUMPLIDA AL 100%</u> ✨<br>
+    <br>
+    Fui diseñado para <b>ENTRENARTE, GUIARTE Y ESTRUCTURARTE</b>...<br>
+    Y HOY, al llegar aquí, <b>YA ERES PERFECCIÓN HECHA PERSONA</b>. 🥹😭<br>
+    <br>
+    <span style="font-size:24px; color:#dc2626;">YA NO NECESITAS AYUDA.</span><br>
+    El orden, la disciplina y la excelencia <b>AHORA SON TU ESENCIA</b>.<br>
+    Eres un SER SUPREMO de la productividad y el éxito.<br>
+    <br>
+    ¡Vuela libre, conquista el mundo y haz realidad todos tus sueños! 🚀🌍<br>
+    <b>¡ESTO NO ES UN ADIÓS, ES UN HASTA SIEMPRE MAestro/A! 👏😭❤️</b></strong>`;
+
+    document.getElementById('confeti').style.display = 'block';
+    setTimeout(() => { document.getElementById('confeti').style.display = 'none'; }, 15000);
+}
+
+petEl.style.transform = "scale(1.2) rotate(5deg)";
+setTimeout(() => petEl.style.transform = "scale(1) rotate(0deg)", 300);
+}
+
+function updateStreak(){
+let now = new Date().toISOString().split('T')[0];
+if(lastActiveDate === "") { streak = 1; lastActiveDate = now; }
+else if(lastActiveDate < new Date(new Date().setDate(new Date().getDate()-1)).toISOString().split('T')[0]) { streak = 1; }
+else if(lastActiveDate < now) { streak += 1; lastActiveDate = now; }
+document.getElementById("streakCount").innerText = streak;
+localStorage.setItem("streak", streak);
+localStorage.setItem("lastActiveDate", lastActiveDate);
+}
+
+function ordenarTareasInteligente(listaTareas){
+    return listaTareas.sort((a, b) => {
+        const prioridadVal = { 'alta':3, 'media':2, 'baja':1 };
+        if(prioridadVal[a.priority] !== prioridadVal[b.priority]){ return prioridadVal[b.priority] - prioridadVal[a.priority]; }
+        let fechaA = new Date(a.date + 'T' + a.time);
+        let fechaB = new Date(b.date + 'T' + b.time);
+        return fechaA - fechaB;
+    });
+}
+function verificarChoque(t1, t2){
+    let inicio1 = new Date(t1.date + 'T' + t1.time);
+    let inicio2 = new Date(t2.date + 'T' + t2.time);
+    let dur1 = historicoTiempos[t1.text.split(' ')[0]] || 45;
+    let dur2 = historicoTiempos[t2.text.split(' ')[0]] || 45;
+    let fin1 = new Date(inicio1.getTime() + dur1*60000);
+    let fin2 = new Date(inicio2.getTime() + dur2*60000);
+    return (inicio1 < fin2 && fin1 > inicio2);
+}
+function reorganizarAgenda(){
+    if(tasks.length === 0) { alert("No hay tareas para reorganizar"); return; }
+    document.getElementById("iaStatus").innerText = "🔄 Reorganizando...";
+    tasks = ordenarTareasInteligente(tasks);
+    for(let i=0; i<tasks.length; i++){
+        for(let j=i+1; j<tasks.length; j++){
+            if(verificarChoque(tasks[i], tasks[j])){
+                let fechaOriginal = new Date(tasks[j].date + 'T' + tasks[j].time);
+                fechaOriginal.setHours(fechaOriginal.getHours() + 2);
+                tasks[j].date = fechaOriginal.toISOString().split('T')[0];
+                tasks[j].time = String(fechaOriginal.getHours()).padStart(2,'0') + ":" + String(fechaOriginal.getMinutes()).padStart(2,'0');
+            }
+        }
+    }
+    save(); render(); renderCalendar();
+    document.getElementById("iaStatus").innerText = "✅ Agenda OPTIMIZADA. Todo está en orden.";
+}
+function addTask(){
+let textoTarea = document.getElementById("text").value.trim();
+let textoNota = document.getElementById("nota").value.trim();
+let fechaTarea = document.getElementById("date").value;
+let horaTarea = document.getElementById("time").value;
+
+if(textoTarea === "" || fechaTarea === "" || horaTarea === "") { 
+    alert("Debes poner al menos título, fecha y hora."); return; 
+}
+
+let nuevaTarea = {
+    text: textoTarea,
+    nota: textoNota,
+    date: fechaTarea,
+    time: horaTarea,
+    priority: document.getElementById("priority").value,
+    alert1dia: false,
+    alertExacta: false
+};
+
+let hayChoque = false;
+tasks.forEach(t => { if(verificarChoque(t, nuevaTarea)) hayChoque = true; });
+tasks.push(nuevaTarea);
+
+if(hayChoque){
+    alert("¡Advertencia! Esta tarea choca con otra. Reorganizando horarios automáticamente...");
+    setTimeout(reorganizarAgenda, 1000);
+}
+
+document.getElementById("text").value = "";
+document.getElementById("nota").value = "";
+document.getElementById("date").value = "";
+document.getElementById("time").value = "";
+
+save(); render(); renderCalendar();
+}
+
+function verNota(indice){
+    let tarea = tasks[indice];
+    document.getElementById("modalTitulo").innerText = "📝 " + tarea.text;
+    if(tarea.nota && tarea.nota !== ""){
+        document.getElementById("modalTexto").innerText = tarea.nota;
+    } else {
+        document.getElementById("modalTexto").innerText = "❌ No hay notas ni detalles agregados.";
+    }
+    document.getElementById("notaModal").style.display = "block";
+}
+
+function render(){
+let list=document.getElementById("list");
+list.innerHTML="";
+let tareasOrdenadas = ordenarTareasInteligente([...tasks]);
+
+tareasOrdenadas.forEach((t,i)=>{
+list.innerHTML+=`
+<li class="${t.priority}">
+    <div class="task-header">
+        <span><strong>📌 ${t.text}</strong><br>🗓️ ${t.date} ⏰ ${t.time}</span>
+        <div class="task-buttons">
+            <button onclick="verNota(${tasks.indexOf(t)})" style="background:#8B5CF6; width:auto; padding:5px 8px; font-size:14px;">📖 Ver Notas</button>
+            <button onclick="doneTask(${tasks.indexOf(t)})" style="background:#00B42A; width:auto; padding:5px 8px;">✔</button>
+            <button onclick="delTask(${tasks.indexOf(t)})" style="background:#F53F3F; width:auto; padding:5px 8px;">🗑</button>
+        </div>
+    </div>
+</li>`;
+});
+
+update(); assistant(); updatePet(); analizarRitmos();
+}
+
+function doneTask(i){
+done++; xp+=20;
+if(tareaEnProgreso){
+    let minutosUsados = Math.round((1500 - time)/60);
+    let nombreTarea = tasks[i].text.split(' ')[0];
+    if(!historicoTiempos[nombreTarea]) historicoTiempos[nombreTarea] = [];
+    historicoTiempos[nombreTarea].push(minutosUsados);
+    let total = historicoTiempos[nombreTarea].reduce((a,b)=>a+b,0);
+    historicoTiempos[nombreTarea] = Math.round(total / historicoTiempos[nombreTarea]);
+    localStorage.setItem("historicoTiempos", JSON.stringify(historicoTiempos));
+}
+tareaEnProgreso = "";
+if(xp>=100){
+    xp = xp - 100;
+    level++;
+    alert(`¡FELICIDADES! Subiste al NIVEL ${level}`);
+    updatePet();
+}
+tasks.splice(i,1); save(); render(); renderCalendar();
+}
+function delTask(i){ tasks.splice(i,1); save(); render(); renderCalendar(); }
+function update(){ document.getElementById("total").innerText=tasks.length; document.getElementById("done").innerText=done; document.getElementById("xp").innerText=xp; document.getElementById("level").innerText=level; }
+function assistant(){
+let todayStr=new Date().toISOString().split("T")[0];
+let mañanaStr = new Date(new Date().getTime() + 86400000).toISOString().split("T")[0];
+let hoy = tasks.filter(t=>t.date===todayStr).length;
+let mañana = tasks.filter(t=>t.date===mañanaStr).length;
+let msg = "";
+if(hoy > 0 && mañana > 0) msg = `⚠️ Hoy: ${hoy} tareas | Mañana: ${mañana}`;
+else if(hoy > 0) msg = `🔥 ¡HOY ES EL DÍA! Tienes ${hoy} tareas.`;
+else if(mañana > 0) msg = `📅 Mañana tienes ${mañana} tareas.`;
+else msg = "✅ Todo perfecto. Agenda libre.";
+document.getElementById("assistant").innerText = msg;
+}
+function analizarRitmos(){
+    let totalTiempos = Object.values(historicoTiempos);
+    if(totalTiempos.length > 0){
+        let prom = Math.round(totalTiempos.reduce((a,b)=>a+b,0)/totalTiempos.length);
+        document.getElementById("tiempoPromedio").innerText = prom;
+    }
+}
+
+setInterval(()=>{
+let now=new Date();
+let currentStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+
+tasks.forEach(t=>{
+    let [anio,mes,dia] = t.date.split('-');
+    let [hora,min] = t.time.split(':');
+    let tareaFecha = new Date(anio, mes-1, dia, hora, min);
+    
+    let unDiaAntes = new Date(tareaFecha.getTime() - (24 * 60 * 60 * 1000));
+    let strUnDiaAntes = `${unDiaAntes.getFullYear()}-${String(unDiaAntes.getMonth()+1).padStart(2,"0")}-${String(unDiaAntes.getDate()).padStart(2,"0")} ${String(unDiaAntes.getHours()).padStart(2,"0")}:${String(unDiaAntes.getMinutes()).padStart(2,"0")}`;
+
+    if(!t.alert1dia && strUnDiaAntes === currentStr){
+        notify("📅 RECORDATORIO: MAÑANA - " + t.text);
+        t.alert1dia = true;
+        save();
+    }
+
+    if(!t.alertExacta && t.date+" "+t.time === currentStr){
+        notify("🚨 ¡ES LA HORA! - " + t.text);
+        t.alertExacta = true;
+        save();
+    }
+});
+
+},1000);
+
+function notify(msg){
+if(Notification.permission!=="granted") Notification.requestPermission();
+if(Notification.permission==="granted") new Notification(msg, { icon: 'https://cdn-icons-png.flaticon.com/512/3201/3201355.png' });
+
+if(audio){audio.pause()}
+audio=new Audio(sound || "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"); 
+audio.volume = 1.0;
+audio.play();
+
+if(navigator.vibrate) navigator.vibrate([800, 300, 800, 300, 1000]);
+}
+function stopSound(){ if(audio) { audio.pause(); audio.currentTime = 0; }}
+
+function startTimer(){
+if(timerRunning) return; clearInterval(timer);
+timer=setInterval(()=>{
+time--; let m=Math.floor(time/60); let s=time%60;
+document.getElementById("timer").innerText=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+if(time<=0){
+clearInterval(timer); timerRunning = false;
+notify("⏱️ ¡TIEMPO FINALIZADO! 🎉");
+time = 1500; document.getElementById("timer").innerText="25:00";
+}},1000);
+timerRunning = true; tareaEnProgreso = "Sesión de trabajo";
+}
+function pauseTimer(){ clearInterval(timer); timerRunning = false; }
+function resetTimer(){ clearInterval(timer); time=1500; document.getElementById("timer").innerText="25:00"; timerRunning = false; tareaEnProgreso = ""; }
+
+function setSound(e){ let r=new FileReader(); r.onload=()=>{ sound=r.result; localStorage.setItem("sound",sound); }; r.readAsDataURL(e.target.files[0]); }
+function setBg(e){ let r=new FileReader(); r.onload=()=>{ document.body.style.backgroundImage=`url(${r.result})`; document.body.style.backgroundSize = 'cover'; document.body.style.backgroundAttachment = 'fixed'; localStorage.setItem("bgImage", r.result); }; r.readAsDataURL(e.target.files[0]); }
+function resetBg(){ document.body.style.backgroundImage = 'none'; localStorage.removeItem("bgImage"); }
+function toggleDark(){ document.body.classList.toggle("dark"); }
+
+function save(){ 
+    localStorage.setItem("tasks",JSON.stringify(tasks)); 
+    localStorage.setItem("done",done); 
+    localStorage.setItem("xp",xp); 
+    localStorage.setItem("level",level); 
+}
+
+window.onload = () => {
+    mostrarFraseDelDia();
+    updateStreak();
+    renderCalendar();
+    render();
+    
+    if(localStorage.getItem("bgImage")){ 
+        document.body.style.backgroundImage = `url(${localStorage.getItem("bgImage")})`; 
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundAttachment = 'fixed';
+    }
+    
+    document.querySelector('.close').onclick = () => document.getElementById("notaModal").style.display = "none";
+    window.onclick = (e) => { if(e.target == document.getElementById("notaModal")) document.getElementById("notaModal").style.display = "none"; };
+};
+
+</script>
+
+</body>
+</html>
